@@ -1,9 +1,17 @@
 MongoDB.Driver Tutorial
-====================
+=======================
 
 Posted on [itenium blog][blog-post].  
 
-## 1 MongoDB
+Start a MongoDB instance  
+```
+docker run -id -p 27000:27017 --name mongo-tut mongo
+```
+
+Install  
+```
+Install-Package MongoDB.Driver
+```
 
 
 
