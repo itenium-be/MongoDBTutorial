@@ -8,6 +8,9 @@ Start a MongoDB instance
 docker run -id -p 27000:27017 --name mongo-tut mongo
 ```
 
+Fill with some random data by running the UnitTest in `0-Seed-Random-Data.cs`.
+
+
 Install  
 ```
 Install-Package MongoDB.Driver

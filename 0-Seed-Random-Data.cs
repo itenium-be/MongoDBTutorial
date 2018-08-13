@@ -1,53 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Configuration;
+using MongoDBTutorial.Models;
 using MongoDBTutorial.Util;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace MongoDBTutorial
 {
     /// <summary>
-    /// Inserts some data in MongoDb
+    /// Inserts some data in MongoDb (persons)
+    /// Adjust credentials in appsettings.json
     /// </summary>
     public class SeedRandomData
     {
+        [Ignore("Should be run only once probably")]
         [Test]
-        public void SeedData()
+        public async Task SeedPersons()
         {
             var sets = MongoConnectionSettings.Get();
-
             var client = new MongoClient(sets.GetConnectionString());
             var database = client.GetDatabase(sets.Database);
 
-            database.CreateCollection("test-seed");
+            string GetFileContent(string p) => File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Seed", p));
 
-            //database.GetCollection<SeedRandomData>("categories");
-
-
+            // Data generated with https://mockaroo.com/
+            database.DropCollection("persons");
+            var persons = JsonConvert.DeserializeObject<IEnumerable<Person>>(GetFileContent("persons.json"));
+            var db = database.GetCollection<Person>("persons");
+            await db.InsertManyAsync(persons);
         }
-
-
-        //public async Task<IEnumerable<Product>> GetAll()
-        //{
-        //    return await _context.Products.Find(x => !x.Deleted).ToListAsync();
-        //}
-
-
-        //public async Task UpdateViewCount(string productId)
-        //{
-        //    var increaseViews = Builders<ProductViews>.Update.Inc("views", 1);
-        //    await _context.ProductViews.UpdateOneAsync(view => view.ProductId == productId, increaseViews);
-        //}
-
-        //public async Task<Product> CreateOrUpdate(Product prod)
-        //{
-        //    //var update = Builders<Product>.Update.CurrentDate("lastModified");
-        //    await _context.Products.ReplaceOneAsync(product => product.Id == prod.Id, prod, new UpdateOptions() { IsUpsert = true }, CancellationToken.None);
-        //    return prod;
-        //}
-
     }
 }
